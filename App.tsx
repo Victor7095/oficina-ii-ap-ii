@@ -1,40 +1,42 @@
-import 'react-native-get-random-values';
-import '@ethersproject/shims';
-import 'node-libs-react-native/globals.js';
+import "react-native-get-random-values";
+import "@ethersproject/shims";
+import "node-libs-react-native/globals.js";
 
-import { ethers } from 'ethers';
-import { useEffect, useState, useCallback } from 'react';
+import { ethers } from "ethers";
+import { useEffect } from "react";
 
-import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import WalletConnectProvider from "@walletconnect/react-native-dapp";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { initFonts } from "./theme/fonts"; // expo
+import * as storage from "./utils/storage";
+import { IAsyncStorage } from "./AsyncStorage";
+import { AppNavigator, canExit } from "./navigators/appNavigator";
+import {
+  useBackButtonHandler,
+  useNavigationPersistence,
+} from "./navigators/navigationUtilities";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import WalletConnectProvider, {
-  useWalletConnect,
-} from '@walletconnect/react-native-dapp';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IAsyncStorage } from './AsyncStorage';
+// This puts screens in a native ViewController or Activity. If you want fully native
+// stack navigation, use `createNativeStackNavigator` in place of `createStackNavigator`:
+// https://github.com/kmagiera/react-native-screens#using-native-stack-navigator
 
-const HandleWalletConnect = () => {
-  const connector = useWalletConnect();
-
-  const connectWallet = useCallback(() => {
-    if (connector && !connector.connected) {
-      return connector.connect();
-    }
-    return null;
-  }, [connector?.connect]);
-
-  return <Button title='Wallet connect' onPress={connectWallet} />;
-};
+export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE";
 
 export default function App() {
-  const [] = useState();
+  useBackButtonHandler(canExit);
+  const {
+    initialNavigationState,
+    onNavigationStateChange,
+    isRestored: isNavigationStateRestored,
+  } = useNavigationPersistence(storage, NAVIGATION_PERSISTENCE_KEY);
 
   useEffect(() => {
     (async () => {
+      await initFonts(); // Configure fonts
       try {
         const provider = new ethers.providers.StaticJsonRpcProvider(
-          'https://eb50-50-66-132-160.ngrok.io/'
+          "https://eb50-50-66-132-160.ngrok.io/"
         );
         console.log(await provider.ready);
         const block = await provider.getBlockNumber();
@@ -48,6 +50,14 @@ export default function App() {
     })();
   }, []);
 
+  // Before we show the app, we have to wait for our state to be ready.
+  // In the meantime, don't render anything. This will be the background
+  // color set in native by rootView's background color.
+  // In iOS: application:didFinishLaunchingWithOptions:
+  // In Android: https://stackoverflow.com/a/45838109/204044
+  // You can replace with your own loading component if you wish.
+  if (!isNavigationStateRestored) return null
+
   return (
     <WalletConnectProvider
       redirectUrl={`wmw://app`}
@@ -55,21 +65,12 @@ export default function App() {
         asyncStorage: AsyncStorage as unknown as IAsyncStorage,
       }}
     >
-      <View style={styles.container}>
-        <HandleWalletConnect />
-        <Text>Open up App.tsx to start working on your app!</Text>
-
-        <StatusBar style='auto' />
-      </View>
+      <SafeAreaProvider>
+        <AppNavigator
+          initialState={initialNavigationState}
+          onStateChange={onNavigationStateChange}
+        />
+      </SafeAreaProvider>
     </WalletConnectProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
