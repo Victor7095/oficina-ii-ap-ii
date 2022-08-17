@@ -2,8 +2,7 @@ import "react-native-get-random-values";
 import "@ethersproject/shims";
 import "node-libs-react-native/globals.js";
 
-import { ethers } from "ethers";
-import { useEffect, useCallback, FC } from "react";
+import { useCallback, FC } from "react";
 
 import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -20,7 +19,15 @@ const HandleWalletConnect = () => {
   const connectWallet = useCallback(() => {
     if (connector && !connector.connected) {
       return connector.connect().then((status) => {
-        console.log("CONNECTED", status);
+        console.log(status);
+
+        // TODO: Mínima ideia se isso é necessário
+        connector.approveSession({
+          accounts: connector.accounts,
+          chainId: 3,
+          rpcUrl: "https://ropsten.infura.io/v3",
+        });
+
         navigation.navigate("tabs");
       });
     }
@@ -32,24 +39,7 @@ const HandleWalletConnect = () => {
 
 export const HomeScreen: FC<RootStackScreenProps<"home">> = () => {
   const connector = useWalletConnect();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const provider = new ethers.providers.StaticJsonRpcProvider(
-          "https://eb50-50-66-132-160.ngrok.io/"
-        );
-        console.log(await provider.ready);
-        const block = await provider.getBlockNumber();
-        console.log({ block });
-        const res = await provider.getBlock(block);
-        console.log({ res });
-        // setBlockNumber(JSON.stringify(res));
-      } catch (e: any) {
-        console.log(e.message);
-      }
-    })();
-  }, []);
+  
 
   return (
     <Screen preset="fixed" style={styles.container}>

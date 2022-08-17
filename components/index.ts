@@ -1,5 +1,7 @@
 export * from "./bullet-item/bullet-item"
 export * from "./button/button"
+export * from "./chat/add-new-chat"
+export * from "./chat/chat-card"
 export * from "./checkbox/checkbox"
 export * from "./form-row/form-row"
 export * from "./header/header"
