@@ -8,7 +8,7 @@ import { abi, CONTRACT_ADDRESS } from "../contract";
 import { Screen, Text, AddNewChat, ChatCard } from "../components";
 import { spacing } from "../theme";
 
-export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
+export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
   const [friends, setFriends] = useState([
     {
       name: "Teste",

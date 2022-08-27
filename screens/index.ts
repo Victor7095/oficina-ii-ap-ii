@@ -1,3 +1,3 @@
 export * from "./HomeScreen"
-export * from "./ChatScreen"
+export * from "./ChatListScreen"
 export * from "./SettingsScreen"

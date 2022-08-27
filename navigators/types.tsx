@@ -14,7 +14,7 @@ export type RootStackScreenProps<T extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, T>;
 
 export type TabNavigatorParamList = {
-  chat: undefined
+  chat_list: undefined
   settings: undefined
 };
 
