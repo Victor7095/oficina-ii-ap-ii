@@ -18,7 +18,7 @@ export const SettingsScreen: FC<TabScreenProps<"settings">> = ({
   return (
     <Screen preset="fixed" style={styles.container}>
       <Text>Settings Screen</Text>
-      <Text>{connector.accounts[0]}</Text>
+      {connector && connector.accounts && <Text>{connector.accounts[0]}</Text>}
       <Button text="Disconnect" onPress={handleDisconnect} />
     </Screen>
   );

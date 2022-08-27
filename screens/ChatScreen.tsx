@@ -1,90 +1,60 @@
-import { ethers } from "ethers";
 import { useEffect } from "react";
 import { FC, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Screen, Text, AddNewChat, ChatCard, Button } from "../components";
-import { TabScreenProps } from "../navigators/types";
-import { abi } from "../abi";
-import { useWalletConnect } from "@walletconnect/react-native-dapp";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 
-// Add the contract address inside the quotes
-const CONTRACT_ADDRESS = "0x0724EE0D1bFd45b511f0C8dbA0745866852e875C";
-// Save the contents of abi in a variable
-const contractABI = abi;
+import { TabScreenProps } from "../navigators/types";
+import { useContract } from "../hooks/useContract";
+import { abi, CONTRACT_ADDRESS } from "../contract";
+import { Screen, Text, AddNewChat, ChatCard } from "../components";
+import { spacing } from "../theme";
 
 export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
-  const connector = useWalletConnect();
-  const [friends, setFriends] = useState(null);
-  const [myContract, setMyContract] = useState(null);
+  const [friends, setFriends] = useState([
+    {
+      name: "Teste",
+      publicKey: "0xbc89504057Af0285972E8590cc0541C27761c976",
+    },
+    {
+      name: "Teste2",
+      publicKey: "0xf5D997798dfbCbAae407abBFf21d4C844D549F94",
+    },
+  ]);
+
+  const [contract] = useContract(CONTRACT_ADDRESS, abi);
 
   useEffect(() => {
-    async function load() {
-      const provider = new WalletConnectProvider({
-        rpc: {
-          3: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-        },
-        chainId: 3,
-        connector: connector,
-        qrcode: false,
-      });
-      await provider.enable();
-      const ethersProvider = new ethers.providers.Web3Provider(provider);
-
-      const signer = ethersProvider.getSigner();
-      const contract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        contractABI,
-        signer
-      );
-      setMyContract(contract);
-
-      // Obter Username e Criar um se não existir
-      try {
-        const address = await signer.getAddress();
-        let present = await contract.checkUserExists(address);
-        let username = "";
-        if (present) username = await contract.getUsername(address);
-        else {
-          if (username === "") username = "GUEST_2";
-          await contract.createAccount(username);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    if (contract) {
+      loadFriends();
     }
-    load();
-  }, []);
+  }, [contract]);
 
   async function loadFriends() {
+    console.log("LOADING FRIENDS");
     let friendList = [];
     // Get Friends
     try {
-      const data = await myContract.getMyFriendList();
+      const data = await contract.getMyFriendList();
       data.forEach((item) => {
         friendList.push({ publicKey: item[0], name: item[1] });
       });
     } catch (err) {
+      console.log(err);
       friendList = null;
     }
     setFriends(friendList);
+    console.log("LOADED FRIENDS");
   }
-
-  // TODO: TESTE SMART CONTRACT
-  const test = async () => {
-    loadFriends();
-  };
 
   // Add a friend to the users' Friends List
   async function addChat(name, publicKey) {
     try {
-      let present = await myContract.checkUserExists(publicKey);
+      let present = await contract.checkUserExists(publicKey);
       if (!present) {
         alert("Address not found: Ask them to join the app :)");
         return;
       }
       try {
-        await myContract.addFriend(publicKey, name);
+        await contract.addFriend(publicKey, name);
         const frnd = { name: name, publicKey: publicKey };
         setFriends(friends.concat(frnd));
       } catch (err) {
@@ -102,7 +72,7 @@ export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
   async function getMessage(friendsPublicKey) {
     let messages = [];
     // Get messages
-    const data = await myContract.readMessage(friendsPublicKey);
+    const data = await contract.readMessage(friendsPublicKey);
     data.forEach((item) => {
       const timestamp = new Date(1000 * item[1].toNumber()).toUTCString();
       messages.push({
@@ -129,21 +99,14 @@ export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
 
   return (
     <Screen preset="fixed" style={styles.container}>
-      <Text>Chat Screen</Text>
-      <Text>Connected: {connector.connected ? "YES" : "NO"}</Text>
-      <Button text="LOAD FRIENDS" onPress={test} />
+      <View>
+        <Text>Chat Screen</Text>
+      </View>
       <AddNewChat
-        myContract={myContract}
+        myContract={contract}
         addHandler={(name, publicKey) => addChat(name, publicKey)}
       />
-      <View
-        style={{
-          backgroundColor: "#DCDCDC",
-          height: "100%",
-        }}
-      >
-        {chats}
-      </View>
+      <View style={styles.chatListContainer}>{chats}</View>
     </Screen>
   );
 };
@@ -151,8 +114,11 @@ export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center",
+    paddingHorizontal: spacing[4],
+  },
+  chatListContainer: {
+    flex: 1,
   },
 });

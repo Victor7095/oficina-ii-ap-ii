@@ -2,7 +2,6 @@ import "react-native-get-random-values";
 import "@ethersproject/shims";
 import "node-libs-react-native/globals.js";
 
-import { ethers } from "ethers";
 import { useEffect } from "react";
 
 import WalletConnectProvider from "@walletconnect/react-native-dapp";
@@ -16,12 +15,16 @@ import {
   useNavigationPersistence,
 } from "./navigators/navigationUtilities";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { LogBox } from 'react-native';
 
 // This puts screens in a native ViewController or Activity. If you want fully native
 // stack navigation, use `createNativeStackNavigator` in place of `createStackNavigator`:
 // https://github.com/kmagiera/react-native-screens#using-native-stack-navigator
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE";
+
+// Ignore log notification by message:
+LogBox.ignoreLogs(['The provided value \'ms-stream', 'The provided value \'moz-chunked-arraybuffer']);
 
 export default function App() {
   useBackButtonHandler(canExit);
@@ -34,19 +37,6 @@ export default function App() {
   useEffect(() => {
     (async () => {
       await initFonts(); // Configure fonts
-      try {
-        const provider = new ethers.providers.StaticJsonRpcProvider(
-          "https://eb50-50-66-132-160.ngrok.io/"
-        );
-        console.log(await provider.ready);
-        const block = await provider.getBlockNumber();
-        console.log({ block });
-        const res = await provider.getBlock(block);
-        console.log({ res });
-        // setBlockNumber(JSON.stringify(res));
-      } catch (e: any) {
-        console.log(e.message);
-      }
     })();
   }, []);
 
@@ -56,7 +46,7 @@ export default function App() {
   // In iOS: application:didFinishLaunchingWithOptions:
   // In Android: https://stackoverflow.com/a/45838109/204044
   // You can replace with your own loading component if you wish.
-  if (!isNavigationStateRestored) return null
+  if (!isNavigationStateRestored) return null;
 
   return (
     <WalletConnectProvider
