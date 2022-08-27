@@ -18,25 +18,61 @@ export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
   const [friends, setFriends] = useState(null);
   const [myContract, setMyContract] = useState(null);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    async function load() {
+      const provider = new WalletConnectProvider({
+        rpc: {
+          3: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+        },
+        chainId: 3,
+        connector: connector,
+        qrcode: false,
+      });
+      await provider.enable();
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+
+      const signer = ethersProvider.getSigner();
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        contractABI,
+        signer
+      );
+      setMyContract(contract);
+
+      // Obter Username e Criar um se não existir
+      try {
+        const address = await signer.getAddress();
+        let present = await contract.checkUserExists(address);
+        let username = "";
+        if (present) username = await contract.getUsername(address);
+        else {
+          if (username === "") username = "GUEST_2";
+          await contract.createAccount(username);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    load();
+  }, []);
+
+  async function loadFriends() {
+    let friendList = [];
+    // Get Friends
+    try {
+      const data = await myContract.getMyFriendList();
+      data.forEach((item) => {
+        friendList.push({ publicKey: item[0], name: item[1] });
+      });
+    } catch (err) {
+      friendList = null;
+    }
+    setFriends(friendList);
+  }
 
   // TODO: TESTE SMART CONTRACT
   const test = async () => {
-    const provider = new WalletConnectProvider({
-      rpc: {
-        3: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-      },
-      chainId: 3,
-      connector: connector,
-      qrcode: false,
-    });
-    await provider.enable();
-    const ethersProvider = new ethers.providers.Web3Provider(provider);
-
-    const signer = ethersProvider.getSigner();
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
-    await contract.createAccount("GUEST");
-    setMyContract(contract);
+    loadFriends();
   };
 
   // Add a friend to the users' Friends List
@@ -82,6 +118,7 @@ export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
     ? friends.map((friend) => {
         return (
           <ChatCard
+            key={friend.publicKey}
             publicKey={friend.publicKey}
             name={friend.name}
             getMessages={(key) => getMessage(key)}
@@ -94,7 +131,11 @@ export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
     <Screen preset="fixed" style={styles.container}>
       <Text>Chat Screen</Text>
       <Text>Connected: {connector.connected ? "YES" : "NO"}</Text>
-      <Button text="TESTE SMART CONTRACT" onPress={test} />
+      <Button text="LOAD FRIENDS" onPress={test} />
+      <AddNewChat
+        myContract={myContract}
+        addHandler={(name, publicKey) => addChat(name, publicKey)}
+      />
       <View
         style={{
           backgroundColor: "#DCDCDC",
@@ -102,10 +143,6 @@ export const ChatScreen: FC<TabScreenProps<"chat">> = () => {
         }}
       >
         {chats}
-        <AddNewChat
-          myContract={myContract}
-          addHandler={(name, publicKey) => addChat(name, publicKey)}
-        />
       </View>
     </Screen>
   );
