@@ -8,9 +8,8 @@ import {
 import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { HomeScreen } from "../screens";
+import { HomeScreen, UserChatScreen } from "../screens";
 import { navigationRef } from "./navigationUtilities";
 import { TabNavigator } from "./tabNavigator";
 import { color } from "../theme";
@@ -29,6 +28,7 @@ const AppStack = () => {
     >
       <Stack.Screen name="home" component={HomeScreen} />
       <Stack.Screen name="tabs" component={TabNavigator} />
+      <Stack.Screen name="user_chat" component={UserChatScreen} />
     </Stack.Navigator>
   );
 };
@@ -38,11 +38,9 @@ interface Props
 
 export const AppNavigator = (props: Props) => {
   const colorScheme = useColorScheme();
-  const insets = useSafeAreaInsets();
 
   const style = {
     flex: 1,
-    paddingTop: insets.top,
     backgroundColor: color.button,
   };
 

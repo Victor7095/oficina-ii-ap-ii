@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { spacing } from "../../theme";
@@ -6,14 +7,20 @@ import { Text } from "../text/text";
 
 // This is a function which renders the friends in the friends list
 export function ChatCard(props) {
+
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    console.log('ENTER USER CHAT')
+    navigation.navigate("user_chat", {
+      publicKey: props.publicKey,
+      name: props.name,
+    });
+  };
+
   return (
     <View>
-      <TouchableOpacity
-        style={styles.container}
-        onPress={() => {
-          props.getMessages(props.publicKey);
-        }}
-      >
+      <TouchableOpacity style={styles.container} onPress={handlePress}>
         <Blockies
           blockies={props.publicKey} //string content to generate icon
           width={64} // blocky width
@@ -23,9 +30,7 @@ export function ChatCard(props) {
         />
         <View style={styles.chatDetails}>
           <Text style={styles.name}>{props.name}</Text>
-          <Text style={styles.publicKey}>
-            {props.publicKey}
-          </Text>
+          <Text style={styles.publicKey}>{props.publicKey}</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -56,5 +61,5 @@ const styles = StyleSheet.create({
   },
   publicKey: {
     fontSize: 12,
-  }
+  },
 });

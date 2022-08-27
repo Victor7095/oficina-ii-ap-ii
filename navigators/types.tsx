@@ -8,6 +8,10 @@ import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 export type RootStackParamList = {
   home: undefined;
   tabs: NavigatorScreenParams<TabNavigatorParamList>;
+  user_chat: {
+    publicKey: string;
+    name: string;
+  };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

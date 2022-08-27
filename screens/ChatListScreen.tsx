@@ -9,16 +9,7 @@ import { Screen, Text, AddNewChat, ChatCard } from "../components";
 import { spacing } from "../theme";
 
 export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
-  const [friends, setFriends] = useState([
-    {
-      name: "Teste",
-      publicKey: "0xbc89504057Af0285972E8590cc0541C27761c976",
-    },
-    {
-      name: "Teste2",
-      publicKey: "0xf5D997798dfbCbAae407abBFf21d4C844D549F94",
-    },
-  ]);
+  const [friends, setFriends] = useState([]);
 
   const [contract] = useContract(CONTRACT_ADDRESS, abi);
 
@@ -68,21 +59,6 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
     }
   }
 
-  // Fetch chat messages with a friend
-  async function getMessage(friendsPublicKey) {
-    let messages = [];
-    // Get messages
-    const data = await contract.readMessage(friendsPublicKey);
-    data.forEach((item) => {
-      const timestamp = new Date(1000 * item[1].toNumber()).toUTCString();
-      messages.push({
-        publicKey: item[0],
-        timeStamp: timestamp,
-        data: item[2],
-      });
-    });
-  }
-
   // Displays each card
   const chats = friends
     ? friends.map((friend) => {
@@ -91,7 +67,6 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
             key={friend.publicKey}
             publicKey={friend.publicKey}
             name={friend.name}
-            getMessages={(key) => getMessage(key)}
           />
         );
       })

@@ -19,7 +19,7 @@ function TabBarIcon(props: { name: React.ComponentProps<typeof Icons>["name"]; c
 export const TabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="chat"
+      initialRouteName="chat_list"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: color.primary,
@@ -32,7 +32,7 @@ export const TabNavigator = () => {
       }}
     >
       <Tab.Screen
-        name="chat"
+        name="chat_list"
         component={ChatScreen}
         options={{
           tabBarLabel: "",
