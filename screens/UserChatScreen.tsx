@@ -24,40 +24,71 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
 
   useEffect(() => {
     if (contract) {
-      getMessage(publicKey);
+      getMessages(publicKey);
       contract.signer.getAddress().then((address) => {
         setIdentity(address);
       });
+      const filterTo = contract.filters.NewMessage(publicKey, null, null);
+
+      contract.on(filterTo, (from, timestamp, message) => {
+        console.log("EVENT RECEIVED: NewMessage ");
+        const createdAt = new Date(1000 * timestamp.toNumber()).toUTCString();
+        const newMessage = {
+          _id: messages.length,
+          text: message,
+          createdAt,
+          user: {
+            _id: from,
+            name,
+          },
+        };
+        // TODO:  APPEND
+        setMessages((prevMessages) => [newMessage, ...prevMessages]);
+      });
+      return () => {
+        contract.removeAllListeners(filterTo);
+      };
     }
+    return () => {};
   }, [contract]);
 
   const onSend = useCallback(
     async (newMessages = []) => {
-      console.log("SENDING MESSAGE");
+      console.log("SENDING", newMessages);
       await contract.sendMessage(publicKey, newMessages[0].text);
+
+      setMessages((previousMessages) => {
+        return GiftedChat.append(previousMessages, newMessages);
+      });
+      console.log("SENT");
     },
     [contract]
   );
 
   // Fetch chat messages with a friend
-  async function getMessage(friendsPublicKey) {
+  async function getMessages(friendsPublicKey) {
     console.log("LOADING MESSAGES");
     let messages = [];
     // Get messages
     const data = await contract.readMessage(friendsPublicKey);
-    data.forEach((item, index) => {
-      const timestamp = new Date(1000 * item[1].toNumber()).toUTCString();
-      messages.push({
-        _id: index,
-        text: item[2],
-        createdAt: timestamp,
-        user: {
-          _id: item[0],
-          name,
-        },
+    //const reversed = data.reverse();
+    data
+      .slice()
+      .reverse()
+      .forEach((item, index) => {
+        console.log(item[2]);
+        const timestamp = new Date(1000 * item[1].toNumber()).toUTCString();
+        messages.push({
+          _id: index,
+          text: item[2],
+          createdAt: timestamp,
+          user: {
+            _id: item[0],
+            name,
+          },
+        });
       });
-    });
-    setMessages(messages);
+    setMessages(GiftedChat.append([], messages));
   }
 
   const goBack = () => {

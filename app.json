@@ -1,8 +1,8 @@
 {
   "expo": {
     "scheme": "wmw",
-    "name": "weedle-mobile-walkthrough",
-    "slug": "weedle-mobile-walkthrough",
+    "name": "chatu",
+    "slug": "chatu",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
