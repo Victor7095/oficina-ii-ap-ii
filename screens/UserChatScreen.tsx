@@ -22,48 +22,40 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
 
   const navigation = useNavigation();
 
+  // Carregar contrato, mensagens anteriores e registrar evento
   useEffect(() => {
     if (contract) {
       getMessages(publicKey);
       contract.signer.getAddress().then((address) => {
         setIdentity(address);
       });
-      const filterTo = contract.filters.NewMessage(publicKey, null, null);
 
+      // Registrar evento para receber mensagens
+      const filterTo = contract.filters.NewMessage(publicKey, null, null);
+      contract.removeAllListeners(filterTo);
       contract.on(filterTo, (from, timestamp, message) => {
         console.log("EVENT RECEIVED: NewMessage ");
         const createdAt = new Date(1000 * timestamp.toNumber()).toUTCString();
-        const newMessage = {
-          _id: messages.length,
-          text: message,
-          createdAt,
-          user: {
-            _id: from,
-            name,
+        setMessages((prevMessages) => [
+          {
+            _id: prevMessages.length,
+            text: message,
+            createdAt,
+            user: {
+              _id: from,
+              name,
+            },
           },
-        };
-        // TODO:  APPEND
-        setMessages((prevMessages) => [newMessage, ...prevMessages]);
+          ...prevMessages,
+        ]);
       });
       return () => {
+        console.log("REMOVE LISTENERS: NewMessage ");
         contract.removeAllListeners(filterTo);
       };
     }
     return () => {};
   }, [contract]);
-
-  const onSend = useCallback(
-    async (newMessages = []) => {
-      console.log("SENDING", newMessages);
-      await contract.sendMessage(publicKey, newMessages[0].text);
-
-      setMessages((previousMessages) => {
-        return GiftedChat.append(previousMessages, newMessages);
-      });
-      console.log("SENT");
-    },
-    [contract]
-  );
 
   // Fetch chat messages with a friend
   async function getMessages(friendsPublicKey) {
@@ -71,7 +63,6 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
     let messages = [];
     // Get messages
     const data = await contract.readMessage(friendsPublicKey);
-    //const reversed = data.reverse();
     data
       .slice()
       .reverse()
@@ -90,6 +81,19 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
       });
     setMessages(GiftedChat.append([], messages));
   }
+
+  const onSend = useCallback(
+    async (newMessages = []) => {
+      console.log("SENDING", newMessages);
+      await contract.sendMessage(publicKey, newMessages[0].text);
+
+      setMessages((previousMessages) => {
+        return GiftedChat.append(previousMessages, newMessages);
+      });
+      console.log("SENT");
+    },
+    [contract]
+  );
 
   const goBack = () => {
     navigation.navigate("tabs");
@@ -113,6 +117,7 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
       <GiftedChat
         messagesContainerStyle={styles.messageContainer}
         messages={messages}
+        multiline={false}
         renderAvatarOnTop
         onSend={(messages) => onSend(messages)}
         user={{ _id: identity }}

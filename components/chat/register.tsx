@@ -19,7 +19,7 @@ export function Register({ show, handleClose, registerHanlder }) {
       <View style={styles.modalBackground}>
         <View style={[styles.centeredView]}>
           <View>
-            <Text> Add New Friend </Text>
+            <Text>Create Account</Text>
           </View>
           <View>
             <View>
@@ -34,7 +34,7 @@ export function Register({ show, handleClose, registerHanlder }) {
           <View>
             <Button text="Close" onPress={handleClose} />
             <Button
-              text="Add Friend"
+              text="Register"
               onPress={() => {
                 registerHanlder(name);
                 handleClose();

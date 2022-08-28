@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { FC, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 
 import { TabScreenProps } from "../navigators/types";
 import { useContract } from "../hooks/useContract";
@@ -59,18 +59,13 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
     }
   }
 
-  // Displays each card
-  const chats = friends
-    ? friends.map((friend) => {
-        return (
-          <ChatCard
-            key={friend.publicKey}
-            publicKey={friend.publicKey}
-            name={friend.name}
-          />
-        );
-      })
-    : null;
+  const renderItem = ({ item }) => (
+    <ChatCard
+      key={item.publicKey}
+      publicKey={item.publicKey}
+      name={item.name}
+    />
+  );
 
   return (
     <Screen preset="fixed" style={styles.container}>
@@ -81,7 +76,12 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
         myContract={contract}
         addHandler={(name, publicKey) => addChat(name, publicKey)}
       />
-      <View style={styles.chatListContainer}>{chats}</View>
+      <FlatList
+        style={styles.chatListContainer}
+        data={friends}
+        renderItem={renderItem}
+        keyExtractor={item => item.publicKey}
+      />
     </Screen>
   );
 };

@@ -5,6 +5,7 @@ import { ScreenProps } from "./screen.props"
 import { isNonScrolling, offsets, presets } from "./screen.presets"
 
 const isIos = Platform.OS === "ios"
+const isAndroid = Platform.OS === "android"
 
 function ScreenWithoutScrolling(props: ScreenProps) {
   const insets = useSafeAreaInsets()
@@ -16,7 +17,7 @@ function ScreenWithoutScrolling(props: ScreenProps) {
   return (
     <KeyboardAvoidingView
       style={[preset.outer, backgroundStyle]}
-      behavior={isIos ? "padding" : undefined}
+      behavior={isAndroid ? "height" : undefined}
       keyboardVerticalOffset={offsets[props.keyboardOffset || "none"]}
     >
       <StatusBar barStyle={props.statusBar || "light-content"} />

@@ -7,6 +7,7 @@ import { Text } from "../text/text"
 // the base styling for the container
 const CONTAINER: ViewStyle = {
   paddingVertical: 0,
+  marginTop: spacing[3],
 }
 
 // the base styling for the TextInput
@@ -18,7 +19,7 @@ const INPUT: TextStyle = {
   backgroundColor: color.bar,
   paddingHorizontal: spacing[4],
   borderRadius: 10,
-  marginTop: -10,
+  marginTop: 5,
 }
 
 // currently we have no presets, but that changes quickly when you build your app.
