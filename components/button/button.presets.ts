@@ -6,9 +6,9 @@ import { color, spacing } from "../../theme"
  */
 const BASE_VIEW: ViewStyle = {
   paddingVertical: spacing[2],
-  paddingHorizontal: spacing[2],
-  borderRadius: 4,
-  justifyContent: "center",
+  borderRadius: 10,
+  alignSelf: 'center',
+  justifyContent: "flex-end",
   alignItems: "center",
 }
 
@@ -25,7 +25,7 @@ export const viewPresets: Record<string, ViewStyle> = {
   /**
    * A smaller piece of secondard information.
    */
-  primary: { ...BASE_VIEW, backgroundColor: color.palette.orange } as ViewStyle,
+  primary: { ...BASE_VIEW, backgroundColor: color.button } as ViewStyle,
 
   /**
    * A button without extras.
@@ -35,11 +35,12 @@ export const viewPresets: Record<string, ViewStyle> = {
     paddingHorizontal: 0,
     paddingVertical: 0,
     alignItems: "flex-start",
+    fontSize: 20, 
   } as ViewStyle,
 }
 
 export const textPresets: Record<ButtonPresetNames, TextStyle> = {
-  primary: { ...BASE_TEXT, fontSize: 15, color: color.palette.white } as TextStyle,
+  primary: { ...BASE_TEXT, fontSize: 14, color: color.textButton } as TextStyle,
   link: {
     ...BASE_TEXT,
     color: color.text,

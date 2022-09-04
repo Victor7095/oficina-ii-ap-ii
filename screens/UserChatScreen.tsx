@@ -7,9 +7,10 @@ import { RootStackScreenProps } from "../navigators/types";
 import { useContract } from "../hooks/useContract";
 import { abi, CONTRACT_ADDRESS } from "../contract";
 import { Screen, Text } from "../components";
-import { color, spacing } from "../theme";
-import { GiftedChat } from "react-native-gifted-chat";
+import { color, spacing, typography } from "../theme";
+import { GiftedChat, InputToolbar, Send, Composer, Bubble, Day, Time} from "react-native-gifted-chat";
 import { useNavigation } from "@react-navigation/native";
+
 
 export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
   route,
@@ -105,17 +106,142 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
           minInputToolbarHeight: 40,
         }
       : {};
+  
+  const customtInputToolbar = props => {
+        return (
+          <InputToolbar
+            {...props}
+            containerStyle={{
+              backgroundColor: color.bar,
+            }}
+          />
+        );
+  };
+
+  const customComposer = props => {
+    return (
+      <Composer
+        {...props}
+        placeholderTextColor={color.inputText}
+        textInputStyle={{
+          color: color.text,
+          fontFamily: typography.primary,
+          fontSize: 12
+        }}
+      />
+    );
+  };
+
+  const customSend = props => {
+    return (
+      <Send
+        {...props}
+        containerStyle={{
+          backgroundColor: color.bar,
+          justifyContent: 'center',
+        }}
+        sendButtonProps={{
+          style:{
+            backgroundColor: color.button,
+            color: color.textButton,
+            alignSelf: 'stretch'
+          },
+        }}
+        label=' ➡ '
+        textStyle={{
+          color: color.textButton,
+          paddingTop: spacing[2],
+        }}
+      />
+    );
+  };
+
+  const customBubble = props => {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          left:{
+            backgroundColor: color.leftBubble,
+          },
+          right:{
+            backgroundColor: color.rightBubble,
+          },
+        }}
+        textStyle={{
+          left:{
+            color: color.text,
+            fontFamily: typography.primary,
+            fontSize: 14
+          },
+          right:{
+            color: color.text,
+            fontFamily: typography.primary,
+            fontSize: 14
+          },
+        }}
+      />
+    );
+  };
+
+  const customDay = props => {
+    return (
+      <Day
+        {...props}
+          textStyle={{
+            color: color.inputText,
+            fontFamily: typography.primary,
+            fontSize: 12
+          }}
+          wrapperStyle={{
+            paddingVertical: spacing[2],
+          }}
+      />
+    );
+  };
+
+  const customTime = props => {
+    return (
+      <Time
+        {...props}
+          timeTextStyle={{
+            left:{
+              color: color.inputText,
+              fontFamily: typography.primary,
+              fontSize: 8
+            },
+            right:{
+              color: color.inputText,
+              fontFamily: typography.primary,
+              fontSize: 8
+            },
+          }}
+          timeFormat='hh:mm'
+      />
+    );
+  };
+      
 
   return (
     <Screen preset="fixed" style={styles.container}>
-      <View style={styles.chatHeader}>
+      <View style={styles.header}>
         <TouchableOpacity style={styles.buttonBack} onPress={goBack}>
           <Icons size={24} name="arrow-back" color={color.primary} />
         </TouchableOpacity>
-        <Text>{name}</Text>
+        <Text style={styles.title}>{name}</Text>
       </View>
       <GiftedChat
         messagesContainerStyle={styles.messageContainer}
+        renderInputToolbar={props => customtInputToolbar(props)}
+        renderComposer={props => customComposer(props)}
+        renderSend={props => customSend(props)}
+        renderBubble={props => customBubble(props)}
+        renderDay={props => customDay(props)}
+        renderTime={props => customTime(props)}
+        renderAvatar={null}
+        placeholder='Digite uma mensagem'
+        alwaysShowSend={true}
+        optionTintColor={color.background}
         messages={messages}
         multiline={false}
         renderAvatarOnTop
@@ -130,16 +256,24 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "stretch",
+    alignItems: 'stretch',
     justifyContent: "center",
   },
-  chatHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: spacing[4],
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+    alignContent: 'center',
+    backgroundColor: color.bar,
+    paddingVertical: spacing[2],
+  },
+  title: {
+    marginRight: spacing[4],
+    fontSize: 20,
   },
   buttonBack: {
-    marginRight: spacing[4],
+    marginLeft: spacing[2],
+    alignSelf: 'center',
   },
   messageContainer: {
     backgroundColor: color.background,

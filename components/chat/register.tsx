@@ -19,15 +19,15 @@ export function Register({ show, handleClose, registerHanlder }) {
       <View style={styles.modalBackground}>
         <View style={[styles.centeredView]}>
           <View>
-            <Text>Create Account</Text>
+            <Text>Conectar-se ao app</Text>
           </View>
           <View>
             <View>
               <TextField
-                label="Name"
+                label="Nome"
                 value={name}
                 onChangeText={(text) => setName(text)}
-                placeholder="Name"
+                placeholder="Escolha seu nome"
               />
             </View>
           </View>

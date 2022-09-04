@@ -5,6 +5,7 @@ import { spacing } from "../../theme";
 import Blockies from "../blockies/blockies";
 import { Text } from "../text/text";
 
+
 // This is a function which renders the friends in the friends list
 export function ChatCard(props) {
 
@@ -29,7 +30,7 @@ export function ChatCard(props) {
           style={styles.blockie} // style of icon
         />
         <View style={styles.chatDetails}>
-          <Text style={styles.name}>{props.name}</Text>
+          <Text style={styles.name} preset='bold'>{props.name}</Text>
           <Text style={styles.publicKey}>{props.publicKey}</Text>
         </View>
       </TouchableOpacity>
@@ -43,6 +44,8 @@ const styles = StyleSheet.create({
     height: 64 + 2 * spacing[4],
     paddingVertical: spacing[4],
     justifyContent: "flex-start",
+    alignItems: "center",
+    marginVertical: spacing[2],
   },
   blockieContainer: {
     width: 64,
@@ -50,16 +53,17 @@ const styles = StyleSheet.create({
   blockie: {
     backgroundColor: "transparent",
     width: 64,
+    alignSelf: "center",
   },
   chatDetails: {
     flex: 1,
     marginLeft: spacing[2],
   },
   name: {
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: spacing[2],
   },
   publicKey: {
-    fontSize: 12,
+    fontSize: 10,
   },
 });

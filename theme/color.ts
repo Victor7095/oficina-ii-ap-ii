@@ -1,16 +1,12 @@
 const palette = {
   black: "#1d1d1d",
   white: "#ffffff",
-  purple: "#7B68EE",
-  lilac: "#EAEAFF",
-  red: "#FF0000",
-  gold: "#FFB700",
-  orange: "#FBA928",
-  orangeDarker: "#EB9918",
-  lightGrey: "#939AA4",
-  lighterGrey: "#CDD4DA",
-  angry: "#dd3333",
-  deepPurple: "#5D2555",
+  blue: "#25255E",
+  inputBlue: 'rgba(37,37,94,0.5))',
+  lightBlue: "#BBDFFF",
+  grayBlue: '#edf4f7',
+  mediumBlue: '#b5e3ff',
+  red: "#FF0000"
 }
 
 /**
@@ -40,27 +36,35 @@ export const color = {
   /**
    * The main tinting color.
    */
-  primary: palette.purple,
+  primary: palette.blue,
   /**
    * A subtle color used for borders and lines.
    */
-  border: palette.purple,
+  border: palette.mediumBlue,
   /**
    * The default color of text in many components.
    */
-  text: palette.purple,
+  text: palette.blue,
   /**
-   * Secondary information.
+   * Backgrounf of left buble chat.
    */
-  dim: palette.lightGrey,
+  leftBubble: palette.grayBlue,
+  /**
+   * Backgrounf of left buble chat.
+   */
+  rightBubble: palette.mediumBlue,
+  /**
+   * The default color of text in input components.
+   */
+  inputText: palette.inputBlue,
   /**
    * Button background
    */
-  button: palette.purple,
+  button: palette.blue,
   /**
    * Text in buttons
    */
-  textButton: palette.white,
+  textButton: palette.lightBlue,
   /**
    * Error messages and icons.
    */
@@ -68,7 +72,7 @@ export const color = {
   /**
    * Input bar and bottom tab bar navigator color.
    */
-  bar: palette.lilac,
+  bar: palette.lightBlue,
 
   /**
    * Storybook background for Text stories, or any stories where

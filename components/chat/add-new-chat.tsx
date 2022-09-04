@@ -4,6 +4,7 @@ import { Modal, StyleSheet, View } from "react-native";
 import { Text } from "../text/text";
 import { Button } from "../button/button";
 import { TextField } from "../text-field/text-field";
+import { color, spacing } from "../../theme";
 
 // This Modal help Add a new friend
 export function AddNewChat(props) {
@@ -16,7 +17,11 @@ export function AddNewChat(props) {
 
   return (
     <View>
-      <Button onPress={handleShow} text="+ NewChat"></Button>
+      <Button onPress={handleShow}
+              text="➕ 😊"
+              style={styles.addChat}
+              textStyle={styles.addChatText}>
+      </Button>
       <Modal
         visible={show}
         animationType="slide"
@@ -26,33 +31,34 @@ export function AddNewChat(props) {
         <View style={styles.modalBackground}>
           <View style={[styles.centeredView]}>
             <View>
-              <Text> Add New Friend </Text>
+              <Text style={styles.modalTitle}> Adicionar amigo </Text>
             </View>
             <View>
               <View>
                 <TextField
-                  label="Name"
+                  label="Nome"
                   value={name}
                   onChangeText={(text) => setName(text)}
-                  placeholder="Name"
+                  placeholder="Digite o nome do amigo"
                 />
                 <TextField
-                  label="Public Key"
+                  label="Chave pública"
                   value={publicKey}
                   onChangeText={(text) => setPublicKey(text)}
-                  placeholder="Enter Friends Public Key"
+                  placeholder="Digite a chave pública do amigo"
                 />
               </View>
             </View>
             <View>
-              <Button text="Close" onPress={handleClose} />
               <Button
-                text="Add Friend"
+                text="Adicionar amigo"
                 onPress={() => {
                   props.addHandler(name, publicKey);
                   handleClose();
                 }}
+                style={styles.modalAddButton}
               />
+              <Button text="Fechar" onPress={handleClose} style={styles.modalCloseButton} />
             </View>
           </View>
         </View>
@@ -72,6 +78,34 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingHorizontal: 20,
     paddingTop: 20,
-    backgroundColor: "white",
+    backgroundColor: color.background,
+  },
+  addChat: {
+    alignSelf: "flex-end",
+    fontSize: 20,
+    borderRadius: 20,
+    marginVertical: spacing[4],
+    marginHorizontal: spacing[4],
+  },
+  addChatText: {
+    fontSize: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    alignSelf: 'center',
+  },
+  modalInput: {
+    color: color.text,
+    fontSize: 14,
+  },
+  modalAddButton: {
+    marginTop: spacing[6],
+    marginBottom: spacing[3],
+    alignSelf: 'stretch',
+    marginHorizontal: spacing[7]
+  },
+  modalCloseButton: {
+    alignSelf: 'stretch',
+    marginHorizontal: spacing[7],
   },
 });

@@ -4,7 +4,7 @@ import "node-libs-react-native/globals.js";
 
 import { useCallback, FC, useState, useEffect } from "react";
 
-import { StyleSheet } from "react-native";
+import { StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 
@@ -13,6 +13,8 @@ import { RootStackScreenProps } from "../navigators/types";
 import { useContract } from "../hooks/useContract";
 import { abi, CONTRACT_ADDRESS } from "../contract";
 import { Register } from "../components/chat/register";
+import { color, spacing } from "../theme";
+
 
 const HandleWalletConnect = () => {
   const connector = useWalletConnect();
@@ -32,7 +34,7 @@ const HandleWalletConnect = () => {
     return null;
   }, [connector?.connect]);
 
-  return <Button text="Wallet connect" onPress={connectWallet} />;
+  return <Button text="Conectar carteira" onPress={connectWallet} />;
 };
 
 export const HomeScreen: FC<RootStackScreenProps<"home">> = ({
@@ -87,9 +89,15 @@ export const HomeScreen: FC<RootStackScreenProps<"home">> = ({
 
   return (
     <Screen preset="fixed" style={styles.container}>
+        <Image source={require('../assets/bg-image.png')}/>
+        <Text style={styles.infoText1} preset="bold">Siga os passos:</Text>
+        <Text style={styles.infoText2}>1. Instale o Metamask em seu dispositivo
+        {'\n'}2. Crie ou abra sua conta/carteira e obtenha alguns ethers
+        {'\n'}3. Clique a seguir para efetuar a transação e conectar sua conta ao app</Text>
+
+
       <HandleWalletConnect />
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <Text>Connected: {connector.connected ? "YES" : "NO"}</Text>
+      <Text style={styles.connectText} preset="bold">Conectado: {connector.connected ? "SIM" : "NÃO"}</Text>
 
       <Register
         show={showRegisterModal}
@@ -105,8 +113,34 @@ export const HomeScreen: FC<RootStackScreenProps<"home">> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: color.bar,
     alignItems: "center",
     justifyContent: "center",
+  },
+  center: {
+    flex: 1,
+    paddingVertical: spacing[4],
+    paddingHorizontal: spacing[4],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  infoText1: {
+    marginTop: spacing[6],
+    marginBottom: spacing[1],
+    fontSize: 14,
+    textAlign: 'center',
+    justifyContent: 'center',
+  },
+  infoText2: {
+    marginBottom: spacing[6],
+    fontSize: 12,
+    textAlign: 'center',
+    justifyContent: 'center',
+  },
+  connectText: {
+    marginTop: spacing[2],
+    fontSize: 14,
+    textAlign: 'center',
+    justifyContent: 'center',
   },
 });
