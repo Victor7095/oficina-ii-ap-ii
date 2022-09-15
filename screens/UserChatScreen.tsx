@@ -11,6 +11,7 @@ import { color, spacing, typography } from "../theme";
 import { GiftedChat, InputToolbar, Send, Composer, Bubble, Day, Time} from "react-native-gifted-chat";
 import { useNavigation } from "@react-navigation/native";
 
+import ptbr from 'dayjs/locale/pt-br'
 
 export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
   route,
@@ -244,6 +245,7 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
         optionTintColor={color.background}
         messages={messages}
         multiline={false}
+        locale={ptbr}
         renderAvatarOnTop
         onSend={(messages) => onSend(messages)}
         user={{ _id: identity }}
