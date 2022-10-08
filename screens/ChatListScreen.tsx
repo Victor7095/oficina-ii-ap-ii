@@ -8,7 +8,6 @@ import { abi, CONTRACT_ADDRESS } from "../contract";
 import { Screen, Text, AddNewChat, ChatCard } from "../components";
 import { color, spacing } from "../theme";
 
-
 export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
   const [friends, setFriends] = useState([]);
 
@@ -71,13 +70,21 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
   return (
     <Screen preset="fixed" style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title} preset='bold'>ChatU</Text>
+        <Text style={styles.title} preset="bold">
+          ChatU
+        </Text>
       </View>
       <FlatList
         style={styles.chatListContainer}
+        contentContainerStyle={{ flexGrow: 1 }}
         data={friends}
         renderItem={renderItem}
-        keyExtractor={item => item.publicKey}
+        keyExtractor={(item) => item.publicKey}
+        ListEmptyComponent={
+          <View style={styles.emptyListContainer}>
+            <Text style={styles.emptyListText}>Nenhuma conversa criada</Text>
+          </View>
+        }
       />
       <AddNewChat
         myContract={contract}
@@ -91,17 +98,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "stretch",
-    justifyContent: 'space-around',
+    justifyContent: "space-around",
   },
   header: {
     justifyContent: "center",
-    alignSelf: 'stretch',
-    alignItems: 'center',
+    alignSelf: "stretch",
+    alignItems: "center",
     backgroundColor: color.bar,
     paddingVertical: spacing[3],
   },
   title: {
     fontSize: 24,
+  },
+  emptyListContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyListText: {
+    fontSize: 18,
   },
   chatListContainer: {
     flex: 1,

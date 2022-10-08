@@ -14,7 +14,7 @@ export function useContract(address, ABI): [Contract, Signer] {
         console.log("LOADING CONTRACT");
         const provider = new WalletConnectProvider({
           rpc: {
-            3: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+            5: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
           },
           chainId: 3,
           connector: connector,
