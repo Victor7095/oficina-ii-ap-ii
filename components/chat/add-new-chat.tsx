@@ -5,6 +5,7 @@ import { Text } from "../text/text";
 import { Button } from "../button/button";
 import { TextField } from "../text-field/text-field";
 import { color, spacing } from "../../theme";
+import { MaterialCommunityIcons as Icons } from "@expo/vector-icons" 
 
 // This Modal help Add a new friend
 export function AddNewChat(props) {
@@ -17,10 +18,9 @@ export function AddNewChat(props) {
 
   return (
     <View>
-      <Button onPress={handleShow}
-              text="➕ 😊"
-              style={styles.addChat}
-              textStyle={styles.addChatText}>
+      <Button onPress={handleShow} style={styles.addChat}>
+        <Icons size={35} name="plus" color={color.bar}/>
+        <Icons size={35} name="emoticon" color={color.bar}/>
       </Button>
       <Modal
         visible={show}
@@ -86,6 +86,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginVertical: spacing[4],
     marginHorizontal: spacing[4],
+    flexDirection: "row",
+    paddingHorizontal: spacing[1],
   },
   addChatText: {
     fontSize: 20,

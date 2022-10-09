@@ -4,6 +4,7 @@ import { Modal, StyleSheet, View } from "react-native";
 import { Text } from "../text/text";
 import { Button } from "../button/button";
 import { TextField } from "../text-field/text-field";
+import { spacing } from "../../theme";
 
 // This Modal help Add a new friend
 export function Register({ show, handleClose, registerHanlder }) {
@@ -19,12 +20,12 @@ export function Register({ show, handleClose, registerHanlder }) {
       <View style={styles.modalBackground}>
         <View style={[styles.centeredView]}>
           <View>
-            <Text>Conectar-se ao app</Text>
+            <Text style={styles.modalTitle}>Conectar-se ao app</Text>
           </View>
           <View>
             <View>
               <TextField
-                label="Nome"
+                label="Seu nome"
                 value={name}
                 onChangeText={(text) => setName(text)}
                 placeholder="Escolha seu nome"
@@ -32,14 +33,15 @@ export function Register({ show, handleClose, registerHanlder }) {
             </View>
           </View>
           <View>
-            <Button text="Close" onPress={handleClose} />
             <Button
-              text="Register"
+              text="Registrar-se"
               onPress={() => {
                 registerHanlder(name);
                 handleClose();
               }}
+              style={styles.modalButton}
             />
+            <Button text="Fechar" onPress={handleClose} style={styles.modalButton}/>
           </View>
         </View>
       </View>
@@ -59,5 +61,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     backgroundColor: "white",
+  },
+  modalTitle: {
+    fontSize: 18,
+    alignSelf: 'center',
+    marginBottom: spacing[4],
+  },
+  modalButton: {
+    marginTop: spacing[3],
+    alignSelf: 'stretch',
+    marginHorizontal: spacing[7]
   },
 });
