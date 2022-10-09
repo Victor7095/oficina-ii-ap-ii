@@ -37,20 +37,21 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
   }
 
   // Add a friend to the users' Friends List
-  async function addChat(name, publicKey) {
+  async function addChat(publicKey) {
     try {
       let present = await contract.checkUserExists(publicKey);
       if (!present) {
-        alert("Amigo não encontrado. Convide-o para conectar-se ao ChatU :)");
+        alert("Amigo não encontrado. Convide-o para conectar-se ao ChatU! :)");
         return;
       }
       try {
+        let name = await contract.getUsername(publicKey);
         await contract.addFriend(publicKey, name);
         const frnd = { name: name, publicKey: publicKey };
         setFriends(friends.concat(frnd));
       } catch (err) {
         alert(
-          "Amigo já adicionado! Você não pode ser amigo de alguém duas vezes ;P"
+          "Amigo já adicionado! Você não pode ser amigo de alguém duas vezes."
         );
       }
     } catch (err) {
@@ -70,8 +71,8 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
   return (
     <Screen preset="fixed" style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title} preset="bold">
-          ChatU
+        <Text style={styles.title}>
+          Conversas
         </Text>
       </View>
       <FlatList
@@ -88,7 +89,7 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
       />
       <AddNewChat
         myContract={contract}
-        addHandler={(name, publicKey) => addChat(name, publicKey)}
+        addHandler={(publicKey) => addChat(publicKey)}
       />
     </Screen>
   );

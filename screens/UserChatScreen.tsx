@@ -217,7 +217,7 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
               fontSize: 8
             },
           }}
-          timeFormat='hh:mm'
+          timeFormat='hh:mm A'
       />
     );
   };

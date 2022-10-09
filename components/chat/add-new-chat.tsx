@@ -9,7 +9,6 @@ import { MaterialCommunityIcons as Icons } from "@expo/vector-icons"
 
 // This Modal help Add a new friend
 export function AddNewChat(props) {
-  const [name, setName] = useState("");
   const [publicKey, setPublicKey] = useState("");
 
   const [show, setShow] = useState(false);
@@ -36,12 +35,6 @@ export function AddNewChat(props) {
             <View>
               <View>
                 <TextField
-                  label="Nome"
-                  value={name}
-                  onChangeText={(text) => setName(text)}
-                  placeholder="Digite o nome do amigo"
-                />
-                <TextField
                   label="Chave pública"
                   value={publicKey}
                   onChangeText={(text) => setPublicKey(text)}
@@ -53,7 +46,7 @@ export function AddNewChat(props) {
               <Button
                 text="Adicionar amigo"
                 onPress={() => {
-                  props.addHandler(name, publicKey);
+                  props.addHandler(publicKey);
                   handleClose();
                 }}
                 style={styles.modalAddButton}
