@@ -16,7 +16,7 @@ import ptbr from 'dayjs/locale/pt-br'
 export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
   route,
 }) => {
-  const { publicKey, name } = route.params;
+  const { sessionId, name } = route.params;
   const [contract] = useContract(CONTRACT_ADDRESS, abi);
 
   const [identity, setIdentity] = useState("");
@@ -27,15 +27,16 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
   // Carregar contrato, mensagens anteriores e registrar evento
   useEffect(() => {
     if (contract) {
-      getMessages(publicKey);
+      getMessages(sessionId);
       contract.signer.getAddress().then((address) => {
         setIdentity(address);
       });
 
       // Registrar evento para receber mensagens
-      const filterTo = contract.filters.NewMessage(publicKey, null, null);
+      const filterTo = contract.filters.NewMessage(sessionId, null, null, null);
       contract.removeAllListeners(filterTo);
-      contract.on(filterTo, (from, timestamp, message) => {
+      contract.on(filterTo, (sessionId, from, timestamp, message) => {
+        if (from === identity) return;
         console.log("EVENT RECEIVED: NewMessage ");
         const createdAt = new Date(1000 * timestamp.toNumber()).toUTCString();
         setMessages((prevMessages) => [
@@ -60,11 +61,11 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
   }, [contract]);
 
   // Fetch chat messages with a friend
-  async function getMessages(friendsPublicKey) {
+  async function getMessages(sessionId) {
     console.log("LOADING MESSAGES");
     let messages = [];
     // Get messages
-    const data = await contract.readMessage(friendsPublicKey);
+    const data = await contract.getMessages(sessionId);
     data
       .slice()
       .reverse()
@@ -87,7 +88,7 @@ export const UserChatScreen: FC<RootStackScreenProps<"user_chat">> = ({
   const onSend = useCallback(
     async (newMessages = []) => {
       console.log("SENDING", newMessages);
-      await contract.sendMessage(publicKey, newMessages[0].text);
+      await contract.sendMessage(sessionId, newMessages[0].text);
 
       setMessages((previousMessages) => {
         return GiftedChat.append(previousMessages, newMessages);

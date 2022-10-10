@@ -9,47 +9,63 @@ import { Screen, Text, AddNewChat, ChatCard } from "../components";
 import { color, spacing } from "../theme";
 
 export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
-  const [friends, setFriends] = useState([]);
+  const [sessions, setSessions] = useState([]);
 
   const [contract] = useContract(CONTRACT_ADDRESS, abi);
 
   useEffect(() => {
     if (contract) {
-      loadFriends();
+      loadSessions();
     }
   }, [contract]);
 
-  async function loadFriends() {
+  async function loadSessions() {
     console.log("LOADING FRIENDS");
-    let friendList = [];
+    let sessionList = [];
     // Get Friends
     try {
-      const data = await contract.getMyFriendList();
-      data.forEach((item) => {
-        friendList.push({ publicKey: item[0], name: item[1] });
-      });
+      const data = await contract.getSessions();
+      sessionList = await Promise.all(
+        data.map(async (item) => {
+          let publicKey = item[0].toHexString();
+          if (item.sessionType == 0) {
+            const users = await contract.getSessionUsers(
+              parseInt(item[0].toHexString(), 16)
+            );
+            publicKey = users[1][0];
+          }
+          return {
+            sessionId: parseInt(item[0].toHexString(), 16),
+            publicKey,
+            name: item[1],
+            sessionType: item[2],
+          };
+        })
+      );
     } catch (err) {
       console.log(err);
-      friendList = null;
+      sessionList = null;
     }
-    setFriends(friendList);
+    setSessions(sessionList);
     console.log("LOADED FRIENDS");
   }
 
   // Add a friend to the users' Friends List
-  async function addChat(publicKey) {
+  async function addChat(name, publicKeys, sessionType) {
+    console.log("CREATE SESSION");
+    console.log(name, publicKeys, sessionType);
     try {
-      let present = await contract.checkUserExists(publicKey);
-      if (!present) {
-        alert("Amigo não encontrado. Convide-o para conectar-se ao ChatU! :)");
-        return;
+      if (Number(sessionType) === 0) {
+        name = await contract.getUsername(publicKeys[0]);
       }
       try {
-        let name = await contract.getUsername(publicKey);
-        await contract.addFriend(publicKey, name);
-        const frnd = { name: name, publicKey: publicKey };
-        setFriends(friends.concat(frnd));
+        await contract.createSession(name, publicKeys, sessionType, {
+          gasLimit: 1000000,
+        });
+        //const frnd = { name: name, publicKey: publicKeys };
+        //setFriends(friends.concat(frnd));
       } catch (err) {
+        console.log(err);
         alert(
           "Amigo já adicionado! Você não pode ser amigo de alguém duas vezes."
         );
@@ -63,6 +79,7 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
   const renderItem = ({ item }) => (
     <ChatCard
       key={item.publicKey}
+      sessionId={item.publicKey}
       publicKey={item.publicKey}
       name={item.name}
     />
@@ -78,7 +95,7 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
       <FlatList
         style={styles.chatListContainer}
         contentContainerStyle={{ flexGrow: 1 }}
-        data={friends}
+        data={sessions}
         renderItem={renderItem}
         keyExtractor={(item) => item.publicKey}
         ListEmptyComponent={
@@ -89,7 +106,9 @@ export const ChatScreen: FC<TabScreenProps<"chat_list">> = () => {
       />
       <AddNewChat
         myContract={contract}
-        addHandler={(publicKey) => addChat(publicKey)}
+        addHandler={(name, publicKey, sessionType) =>
+          addChat(name, publicKey, sessionType)
+        }
       />
     </Screen>
   );

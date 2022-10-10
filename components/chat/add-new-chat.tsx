@@ -5,21 +5,58 @@ import { Text } from "../text/text";
 import { Button } from "../button/button";
 import { TextField } from "../text-field/text-field";
 import { color, spacing } from "../../theme";
-import { MaterialCommunityIcons as Icons } from "@expo/vector-icons" 
+import { MaterialCommunityIcons as Icons } from "@expo/vector-icons";
+import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
 
 // This Modal help Add a new friend
 export function AddNewChat(props) {
+  const [name, setName] = useState("");
+  const [publicKeys, setPublicKeys] = useState([]);
   const [publicKey, setPublicKey] = useState("");
+
+  const [sessionType, setSessionType] = useState<RadioButtonProps[]>([
+    {
+      id: "1", // acts as primary key, should be unique and non-empty string
+      label: "Grupo",
+      value: "1",
+      selected: true,
+    },
+    {
+      id: "0",
+      label: "Privado",
+      value: "0",
+    },
+  ]);
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const handleDeleteAddress = (publicKey) => {
+    setPublicKeys(publicKeys.filter((item) => item !== publicKey));
+  };
+
+  const handleAddAddress = () => {
+    if (publicKey === "") {
+      alert("Insira um endereço válido");
+      return;
+    }
+    setPublicKeys(publicKeys.concat(publicKey));
+    setPublicKey("");
+  };
+
+  function onPressRadioButton(radioButtonsArray: RadioButtonProps[]) {
+    setSessionType(radioButtonsArray);
+    setName("");
+    setPublicKey("");
+    setPublicKeys([]);
+  }
+
   return (
     <View>
       <Button onPress={handleShow} style={styles.addChat}>
-        <Icons size={35} name="plus" color={color.bar}/>
-        <Icons size={35} name="emoticon" color={color.bar}/>
+        <Icons size={35} name="plus" color={color.bar} />
+        <Icons size={35} name="emoticon" color={color.bar} />
       </Button>
       <Modal
         visible={show}
@@ -30,28 +67,71 @@ export function AddNewChat(props) {
         <View style={styles.modalBackground}>
           <View style={[styles.centeredView]}>
             <View>
-              <Text style={styles.modalTitle}> Adicionar amigo </Text>
+              <Text style={styles.modalTitle}> Nova conversa </Text>
             </View>
             <View>
               <View>
+                <RadioGroup
+                  radioButtons={sessionType}
+                  onPress={onPressRadioButton}
+                  containerStyle={styles.radioGroupContainer}
+                />
+                {sessionType.find((e) => e.selected)?.value === "1" && (
+                  <>
+                    <TextField
+                      label="Nome"
+                      value={name}
+                      onChangeText={(text) => setName(text)}
+                      placeholder="Digite o nome do grupo"
+                    />
+                    {publicKeys.map((key) => (
+                      <View style={styles.newFriendContainer} key={key}>
+                        <Text style={styles.newFriendKey}>{key}</Text>
+                        <Button
+                          text="Remover"
+                          onPress={() => handleDeleteAddress(key)}
+                        />
+                      </View>
+                    ))}
+                  </>
+                )}
                 <TextField
                   label="Chave pública"
                   value={publicKey}
                   onChangeText={(text) => setPublicKey(text)}
                   placeholder="Digite a chave pública do amigo"
                 />
+                {sessionType.find((e) => e.selected)?.value === "1" && (
+                  <Button
+                    text="Adicionar"
+                    onPress={handleAddAddress}
+                    style={styles.modalCloseButton}
+                  />
+                )}
               </View>
             </View>
             <View>
               <Button
-                text="Adicionar amigo"
+                text="Criar conversa"
                 onPress={() => {
-                  props.addHandler(publicKey);
+                  const keys = publicKeys;
+                  if (sessionType.find((e) => e.selected)?.value === "0") {
+                    keys.push(publicKey);
+                  }
+                  props.addHandler(
+                    name,
+                    keys,
+                    sessionType.find((e) => e.selected)?.value
+                  );
                   handleClose();
                 }}
                 style={styles.modalAddButton}
               />
-              <Button text="Fechar" onPress={handleClose} style={styles.modalCloseButton} />
+              <Button
+                text="Fechar"
+                onPress={handleClose}
+                style={styles.modalCloseButton}
+              />
             </View>
           </View>
         </View>
@@ -87,7 +167,20 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    alignSelf: 'center',
+    alignSelf: "center",
+    marginBottom: spacing[2],
+  },
+  radioGroupContainer: {
+    flexDirection: "row",
+  },
+  newFriendContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  newFriendKey: {
+    fontSize: 10,
+    marginRight: spacing[1],
   },
   modalInput: {
     color: color.text,
@@ -96,11 +189,11 @@ const styles = StyleSheet.create({
   modalAddButton: {
     marginTop: spacing[6],
     marginBottom: spacing[3],
-    alignSelf: 'stretch',
-    marginHorizontal: spacing[7]
+    alignSelf: "stretch",
+    marginHorizontal: spacing[7],
   },
   modalCloseButton: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     marginHorizontal: spacing[7],
   },
 });
