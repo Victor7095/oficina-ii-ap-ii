@@ -88,26 +88,29 @@ export function AddNewChat(props) {
                       <View style={styles.newFriendContainer} key={key}>
                         <Text style={styles.newFriendKey}>{key}</Text>
                         <Button
-                          text="Remover"
+                          text="–"
                           onPress={() => handleDeleteAddress(key)}
+                          style={styles.newFriendButton}
                         />
                       </View>
                     ))}
                   </>
                 )}
-                <TextField
-                  label="Chave pública"
-                  value={publicKey}
-                  onChangeText={(text) => setPublicKey(text)}
-                  placeholder="Digite a chave pública do amigo"
-                />
-                {sessionType.find((e) => e.selected)?.value === "1" && (
-                  <Button
-                    text="Adicionar"
-                    onPress={handleAddAddress}
-                    style={styles.modalCloseButton}
+                <View style={sessionType.find((e) => e.selected)?.value === "1" && (styles.newFriendContainer)}>
+                  <TextField
+                    label="Chave pública"
+                    value={publicKey}
+                    onChangeText={(text) => setPublicKey(text)}
+                    placeholder="Digite a chave pública do amigo"
                   />
-                )}
+                  {sessionType.find((e) => e.selected)?.value === "1" && (
+                    <Button
+                      text="+"
+                      onPress={handleAddAddress}
+                      style={styles.newFriendButton}
+                    />
+                  )}
+                </View>
               </View>
             </View>
             <View>
@@ -172,22 +175,32 @@ const styles = StyleSheet.create({
   },
   radioGroupContainer: {
     flexDirection: "row",
+    fontSize: 12,
   },
   newFriendContainer: {
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    alignItems: 'center',
+    marginLeft: spacing[1],
+    marginRight: spacing[7],
   },
   newFriendKey: {
     fontSize: 10,
-    marginRight: spacing[1],
+    marginLeft: spacing[1],
+  },
+  newFriendButton: {
+    paddingVertical: spacing[0],
+    borderRadius: 20,
+    alignSelf: 'flex-end',
+    marginLeft: spacing[2],
   },
   modalInput: {
     color: color.text,
     fontSize: 14,
   },
   modalAddButton: {
-    marginTop: spacing[6],
+    marginTop: spacing[5],
     marginBottom: spacing[3],
     alignSelf: "stretch",
     marginHorizontal: spacing[7],
