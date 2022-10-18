@@ -9,7 +9,7 @@ export type RootStackParamList = {
   home: undefined;
   tabs: NavigatorScreenParams<TabNavigatorParamList>;
   user_chat: {
-    publicKey: string;
+    sessionId: string;
     name: string;
   };
 };

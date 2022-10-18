@@ -14,7 +14,7 @@ export function ChatCard(props) {
   const handlePress = () => {
     console.log('ENTER USER CHAT')
     navigation.navigate("user_chat", {
-      publicKey: props.publicKey,
+      sessionId: props.sessionId,
       name: props.name,
     });
   };

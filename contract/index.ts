@@ -1,23 +1,5 @@
-export const CONTRACT_ADDRESS = "0x4998F3C967051E5f738C0d21c55090A75d7AD820";
+export const CONTRACT_ADDRESS = "0x3449350c27995Cc1CC82B56f0c003481A3fB6134";
 export const abi = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "friend_key",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-    ],
-    name: "addFriend",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
   {
     inputs: [
       {
@@ -32,8 +14,37 @@ export const abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "address[]",
+        name: "newUsers",
+        type: "address[]",
+      },
+      {
+        internalType: "enum ChatU.SessionType",
+        name: "sessionType",
+        type: "uint8",
+      },
+    ],
+    name: "createSession",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     anonymous: false,
     inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "sessionId",
+        type: "uint256",
+      },
       {
         indexed: true,
         internalType: "address",
@@ -59,9 +70,9 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "friend_key",
-        type: "address",
+        internalType: "uint256",
+        name: "sessionId",
+        type: "uint256",
       },
       {
         internalType: "string",
@@ -94,8 +105,80 @@ export const abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "sessionId",
+        type: "uint256",
+      },
+    ],
+    name: "getMessages",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "sender",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "timestamp",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "msg",
+            type: "string",
+          },
+        ],
+        internalType: "struct ChatU.Message[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
-    name: "getMyFriendList",
+    name: "getSessions",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "enum ChatU.SessionType",
+            name: "sessionType",
+            type: "uint8",
+          },
+        ],
+        internalType: "struct ChatU.Session[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "sessionId",
+        type: "uint256",
+      },
+    ],
+    name: "getSessionUsers",
     outputs: [
       {
         components: [
@@ -110,7 +193,7 @@ export const abi = [
             type: "string",
           },
         ],
-        internalType: "struct Database.friend[]",
+        internalType: "struct ChatU.User[]",
         name: "",
         type: "tuple[]",
       },
@@ -132,42 +215,6 @@ export const abi = [
         internalType: "string",
         name: "",
         type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "friend_key",
-        type: "address",
-      },
-    ],
-    name: "readMessage",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "address",
-            name: "sender",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "timestamp",
-            type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "msg",
-            type: "string",
-          },
-        ],
-        internalType: "struct Database.message[]",
-        name: "",
-        type: "tuple[]",
       },
     ],
     stateMutability: "view",

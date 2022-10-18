@@ -21,6 +21,7 @@ const HandleWalletConnect = () => {
 
   const connectWallet = useCallback(() => {
     console.log("CONNECTING");
+    connector && connector.connected && connector.killSession();
     if (connector && !connector.connected) {
       return connector
         .connect()
