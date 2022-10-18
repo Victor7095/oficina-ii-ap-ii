@@ -1,6 +1,6 @@
 ## Dapp ChatU
 
-Aplicação desenvolvida para a avaliação 2 da disciplina Oficina de Desenvolvimento de Software 2, em 2022/01.
+Aplicação desenvolvida para a avaliação 2 da disciplina Oficina de Desenvolvimento de Sistemas 2, em 2022/01.
 
 
 **Equipe:**
