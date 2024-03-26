@@ -30,7 +30,7 @@
     "i18n-js": "^3.8.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "react-native": "0.69.6",
+    "react-native": "0.73.6",
     "react-native-get-random-values": "^1.8.0",
     "react-native-gifted-chat": "^1.0.4",
     "react-native-modal": "^13.0.1",
